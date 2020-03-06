@@ -1,6 +1,9 @@
 # This is necessary to find the main code
 import math
 import sys
+
+from bomberman.sensed_world import SensedWorld
+
 sys.path.insert(0, '../bomberman')
 # Import necessary stuff
 from entity import CharacterEntity
@@ -11,7 +14,37 @@ from colorama import Fore, Back
 class TestCharacter(CharacterEntity):
 
     def do(self, wrld):
-        # Your code here
+
+        # The rate at which to change the weights
+        learning_rate = 0.2
+
+        # The weight applied to the exit feature
+        exit_weight = 3
+
+        # The weight applied to the monster feature
+        monster_weight = 4
+
+        # Create copied version of current world to test on
+        copied_world = SensedWorld.from_world(wrld)
+
+        # Get the CharacterEntity obj from the copied world
+        copied_char = copied_world.me(self)
+
+
+        # Variable to hold the greatest value found when moving
+        max_action_value = 0
+        max_action = (1, 0)
+
+        # Loop through all 8 moves using the copied char and decide which one to make
+        # Loop through all the dx values
+        for dx in range (-1, 2):
+            # Loop through all the dy values
+            for dy in range (-1, 2):
+                print("TODO: CHECK (", dx, dy, ")")
+
+        self.move(max_action[0], max_action[1])
+
+        print("================================================")
         print("exit distance: ", self.distance_to_exit(wrld))
         print("monster distance: ", self.distance_to_monster(wrld))
         print("bomb distance: ", self.distance_to_bomb(wrld))
@@ -20,6 +53,8 @@ class TestCharacter(CharacterEntity):
         print("next to monster: ", self.next_to_monster(wrld))
         print("next to wall: ", self.next_to_wall(wrld))
         print("in explosion: ", self.is_in_explosion(wrld))
+        print("================================================")
+
         pass
 
     # function to tell the distance of the agent to the exit
