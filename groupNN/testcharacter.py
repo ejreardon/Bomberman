@@ -65,7 +65,7 @@ class TestCharacter(CharacterEntity):
             for dy in range (-1, 2):
                 print("TODO: CHECK (", dx, dy, ")")
                 copied_char.move(dx, dy)
-                move_val = Features.distance_to_exit(copied_char, copied_world) * exit_weight + Features.distance_to_monster(copied_char, copied_world) * monster_weight + \ 
+                move_val = Features.distance_to_exit(copied_char, copied_world) * exit_weight + Features.distance_to_monster(copied_char, copied_world) * monster_weight + \
                 Features.distance_to_bomb(copied_char, copied_world) * bomb_weight + Features.next_to_exit(copied_char, copied_world) * exit_weight + \
                 Features.next_to_monster(copied_char, copied_world) * monster_weight + Features.next_to_wall(copied_char, copied_world) * wall_weight + \
                 Features.is_in_explosion(copied_char, copied_world) * bomb_weight
