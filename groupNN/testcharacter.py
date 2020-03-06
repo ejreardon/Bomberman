@@ -15,6 +15,11 @@ class TestCharacter(CharacterEntity):
 
     def do(self, wrld):
 
+        # ===============================
+        # INITIALIZATION PHASE
+        # ===============================
+        # Initializes all variables and sets up world for testing
+
         # The rate at which to change the weights
         learning_rate = 0.2
 
@@ -30,6 +35,17 @@ class TestCharacter(CharacterEntity):
         # Get the CharacterEntity obj from the copied world
         copied_char = copied_world.me(self)
 
+        # ===============================
+        # EXPLORATION PHASE
+        # ===============================
+        # Randomly make actions and change weights accordingly for set
+        # amount of episodes
+
+        # ===============================
+        # EXPLOITATION PHASE
+        # ===============================
+        # Based on the weights taken from the exploration phase,
+        # use them to find the best solution and make the move
 
         # Variable to hold the greatest value found when moving
         max_action_value = 0
