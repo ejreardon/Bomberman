@@ -4,7 +4,7 @@ import sys
 
 sys.path.insert(0, '../bomberman')
 from sensed_world import SensedWorld
-import Features
+from features import Features
 
 # Import necessary stuff
 from entity import CharacterEntity
@@ -65,21 +65,22 @@ class TestCharacter(CharacterEntity):
             for dy in range (-1, 2):
                 print("TODO: CHECK (", dx, dy, ")")
                 copied_char.move(dx, dy)
-                move_val = Features.distance_to_exit(copied_char, copied_world) * exit_weight + Features.distance_to_monster(copied_char, copied_world) * monster_weight + \
-                Features.distance_to_bomb(copied_char, copied_world) * bomb_weight + Features.next_to_exit(copied_char, copied_world) * exit_weight + \
-                Features.next_to_monster(copied_char, copied_world) * monster_weight + Features.next_to_wall(copied_char, copied_world) * wall_weight + \
-                Features.is_in_explosion(copied_char, copied_world) * bomb_weight
+                move_val = Features.distance_to_exit(Features, copied_char, copied_world) * exit_weight + Features.distance_to_monster(Features, copied_char, copied_world) * monster_weight + \
+                Features.distance_to_bomb(Features, copied_char, copied_world) * bomb_weight + Features.next_to_exit(Features, copied_char, copied_world) * exit_weight + \
+                Features.next_to_monster(Features, copied_char, copied_world) * monster_weight + Features.next_to_wall(Features, copied_char, copied_world) * wall_weight + \
+                Features.is_in_explosion(Features, copied_char, copied_world) * bomb_weight
+                print("val: ", move_val)
 
         self.move(max_action[0], max_action[1])
 
         print("================================================")
-        print("exit distance: ", Features.distance_to_exit(wrld))
-        print("monster distance: ", Features.distance_to_monster(wrld))
-        print("bomb distance: ", Features.distance_to_bomb(wrld))
-        print("next to exit: ", Features.next_to_exit(wrld))
-        print("next to monster: ", Features.next_to_monster(wrld))
-        print("next to wall: ", Features.next_to_wall(wrld))
-        print("in explosion: ", Features.is_in_explosion(wrld))
+        print("exit distance: ", Features.distance_to_exit(Features, self, wrld))
+        print("monster distance: ", Features.distance_to_monster(Features, self, wrld))
+        print("bomb distance: ", Features.distance_to_bomb(Features, self, wrld))
+        print("next to exit: ", Features.next_to_exit(Features, self, wrld))
+        print("next to monster: ", Features.next_to_monster(Features, self, wrld))
+        print("next to wall: ", Features.next_to_wall(Features, self, wrld))
+        print("in explosion: ", Features.is_in_explosion(Features, self, wrld))
         print("================================================")
 
         pass
