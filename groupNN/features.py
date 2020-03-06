@@ -11,9 +11,12 @@ from entity import CharacterEntity
 from colorama import Fore, Back
 
 class Features:
+    # def __init__(self, CharacterEntity, World):
+    #     self.CharacterEntity = CharacterEntity
+    #     self.World = World
     
     # function to tell the distance of the agent to the exit
-    def distance_to_exit(CharacterEntity, World):
+    def distance_to_exit(self, CharacterEntity, World):
         ex, ey = -1, -1
         cx = World.me(CharacterEntity).x
         cy = World.me(CharacterEntity).y
@@ -30,7 +33,7 @@ class Features:
             return -1
     
     # function to tell the distance of the agent to the CLOSEST monster
-    def distance_to_monster(CharacterEntity, World):
+    def distance_to_monster(self, CharacterEntity, World):
         mx, my = 1000, 1000
         cx = World.me(CharacterEntity).x
         cy = World.me(CharacterEntity).y
@@ -63,7 +66,7 @@ class Features:
             return -1
     
     # function to tell distance of an agent to a bomb
-    def distance_to_bomb(CharacterEntity, World):
+    def distance_to_bomb(self, CharacterEntity, World):
         bx = -1
         by = -1
         cx = World.me(CharacterEntity).x
@@ -81,16 +84,16 @@ class Features:
             return -1
     
     # function to tell whether an agent is next to an exit
-    def next_to_exit(CharacterEntity, World):
-        dist = CharacterEntity.distance_to_exit(World)
+    def next_to_exit(self, CharacterEntity, World):
+        dist = self.distance_to_exit(CharacterEntity, World)
         if dist == 1:
             return True
         else:
             return False
     
     # function to tell whether an agent is next to a monster
-    def next_to_monster(CharacterEntity, World):
-        dist = CharacterEntity.distance_to_monster(World)
+    def next_to_monster(self, CharacterEntity, World):
+        dist = self.distance_to_monster(CharacterEntity, World)
         if dist == 1:
             return True
         else:
@@ -98,7 +101,7 @@ class Features:
     
     # function to tell whether an agent is next to a wall
     # ToDo: Can Expand on this to return direction or placement of walls
-    def next_to_wall(CharacterEntity, World):
+    def next_to_wall(self, CharacterEntity, World):
         cx = World.me(CharacterEntity).x
         cy = World.me(CharacterEntity).y
         walls = []
@@ -113,7 +116,7 @@ class Features:
             return False
     
     # function to tell whether an agent is in a bomb explosion
-    def is_in_explosion(CharacterEntity, World):
+    def is_in_explosion(self, CharacterEntity, World):
         cx = World.me(CharacterEntity).x
         cy = World.me(CharacterEntity).y
         explosions = []
