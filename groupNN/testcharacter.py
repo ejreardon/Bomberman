@@ -1,5 +1,6 @@
 # This is necessary to find the main code
 import math
+import random
 import sys
 
 sys.path.insert(0, '../bomberman')
@@ -25,8 +26,10 @@ class TestCharacter(CharacterEntity):
         # The rate at which to change the weights
         learning_rate = 0.2
 
+        # TODO All weights retrieved from .txt file to hold data between games
+
         # The weight applied to the exit feature
-        exit_weight = 3
+        exit_weight = -200
 
         # The weight applied to the monster feature
         monster_weight = 4
@@ -37,26 +40,29 @@ class TestCharacter(CharacterEntity):
         # The weight applied to the wall feature
         wall_weight = 1
 
-        # Create copied version of current world to test on
-        copied_world = SensedWorld.from_world(wrld)
+        # Choose based on decreasing percentage random or best given moves
+        # TODO Gradient Descent
+        # TODO decreasing amount and amt of turns is retrieved from .txt file
 
-        # Get the CharacterEntity obj from the copied world
-        copied_char = copied_world.me(self)
+        # Makes a random action
+        # self.non_rand_action(wrld, exit_weight, bomb_weight, monster_weight, wall_weight)
 
-        # ===============================
-        # EXPLORATION PHASE
-        # ===============================
-        # Randomly make actions and change weights accordingly for set
-        # amount of episodes
+        # Makes a non-random action
+        self.random_action(wrld)
 
-        # ===============================
-        # EXPLOITATION PHASE
-        # ===============================
-        # Based on the weights taken from the exploration phase,
-        # use them to find the best solution and make the move
+        pass
 
+    def random_action(self, wrld):
+        dx = random.randrange(-1, 2, 1)
+        dy = random.randrange(-1, 2, 1)
+        print("Random dx: ", dx)
+        print("Random dy: ", dy)
+        print("Making random move (", dx, ",", dy, ")")
+        self.move(dx, dy)
+
+    def non_rand_action(self, wrld, exit_weight, bomb_weight, monster_weight, wall_weight):
         # Variable to hold the greatest value found when moving
-        max_action_value = 0
+        max_action_value = float("-inf")
         max_action = (1, 0)
 
         # Loop through all 8 moves using the copied char and decide which one to make
@@ -64,24 +70,17 @@ class TestCharacter(CharacterEntity):
         for dx in range (-1, 2):
             # Loop through all the dy values
             for dy in range (-1, 2):
-                print("TODO: CHECK (", dx, dy, ")")
-                copied_char.move(dx, dy)
-                move_val = f.distance_to_exit(copied_char, copied_world) * exit_weight + f.distance_to_monster(copied_char, copied_world) * monster_weight + \
-                f.distance_to_bomb(copied_char, copied_world) * bomb_weight + f.next_to_exit(copied_char, copied_world) * exit_weight + \
-                f.next_to_monster(copied_char, copied_world) * monster_weight + f.next_to_wall(copied_char, copied_world) * wall_weight + \
-                f.is_in_explosion(copied_char, copied_world) * bomb_weight
+                print("=================================")
+                print("SPACE (", dx, dy, ")")
+                move_val = f.distance_to_exit(dx, dy, wrld) * exit_weight + f.distance_to_monster(dx, dy, wrld) * monster_weight + \
+                f.distance_to_bomb(dx, dy, wrld) * bomb_weight + f.next_to_exit(dx, dy, wrld) * exit_weight + \
+                f.next_to_monster(dx, dy, wrld) * monster_weight + f.next_to_wall(dx, dy, wrld) * wall_weight + \
+                f.is_in_explosion(dx, dy, wrld) * bomb_weight
+                if move_val > max_action_value:
+                    max_action_value = move_val
+                    max_action = (dx, dy)
                 print("val: ", move_val)
+                print("=================================")
 
+        print("Making move (", max_action[0], ",", max_action[1], ") with value ", max_action_value)
         self.move(max_action[0], max_action[1])
-
-        print("================================================")
-        print("exit distance: ", f.distance_to_exit(self, wrld))
-        print("monster distance: ", f.distance_to_monster(self, wrld))
-        print("bomb distance: ", f.distance_to_bomb(self, wrld))
-        print("next to exit: ", f.next_to_exit(self, wrld))
-        print("next to monster: ", f.next_to_monster(self, wrld))
-        print("next to wall: ", f.next_to_wall(self, wrld))
-        print("in explosion: ", f.is_in_explosion(self, wrld))
-        print("================================================")
-
-        pass
