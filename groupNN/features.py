@@ -25,8 +25,8 @@ class Features:
                     ex = x
                     ey = y
         if ex != -1 and ey != -1:
-            dist_x = ex - cx
-            dist_y = ey - cy
+            dist_x = abs(ex - cx)
+            dist_y = abs(ey - cy)
             return max(dist_x, dist_y)
         else:
             return -1
@@ -50,9 +50,9 @@ class Features:
             j = 1
             for coordinate in monsters[i]:
                 if j == 1:
-                    dist_x = coordinate - cx
+                    dist_x = abs(coordinate - cx)
                 else:
-                    dist_y = coordinate - cy
+                    dist_y = abs(coordinate - cy)
                 j += 1
                 if dist_x < mx or dist_y < my:
                     if max(dist_x, dist_y) < max(mx, my):
@@ -76,8 +76,8 @@ class Features:
                     bx = x
                     by = y
         if bx != -1 and by != -1:
-            dist_x = bx - cx
-            dist_y = by - cy
+            dist_x = abs(bx - cx)
+            dist_y = abs(by - cy)
             return max(dist_x, dist_y)
         else:
             return 10000

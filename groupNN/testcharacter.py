@@ -93,8 +93,7 @@ class TestCharacter(CharacterEntity):
             self.non_rand_action(self.x, self.y, wrld, True)
 
         else:
-            self.non_rand_action(self.x, self.y, wrld, True)
-            #self.random_action(wrld)
+            self.random_action(wrld)
 
         pass
 
@@ -174,8 +173,8 @@ class TestCharacter(CharacterEntity):
                 print("new character coordinates: ", (x, y))
 
                 # evaluation of move value for each adjacent move (+2 to each due to -1 return for some - avoid 1/0)
-                exit_val = 1 / (f.distance_to_exit(x, y, wrld)) * exit_weight
-                monst_val = -1 / (f.distance_to_monster(x, y, wrld)) * monster_weight
+                exit_val = 1 / (1 + f.distance_to_exit(x, y, wrld)) * exit_weight
+                monst_val = -1 / (1 + f.distance_to_monster(x, y, wrld)) * monster_weight
                 bomb_val = -1 / (1 + f.distance_to_bomb(x, y, wrld)) * bomb_weight
                 adjacent_exit_val = f.next_to_exit(x, y, wrld) * adjacent_exit_weight
                 adjacent_monst_val = -f.next_to_monster(x, y, wrld) * adjacent_monst_weight
@@ -184,8 +183,8 @@ class TestCharacter(CharacterEntity):
                 explosion_val = 1 / (1 + f.is_in_explosion(x, y, wrld)) * explosion_weight
 
                 print("=======================")
-                print("exit value: ", 1 / f.distance_to_exit(x, y, wrld) * exit_weight)
-                print("monster value: ", -1 / (f.distance_to_monster(x, y, wrld)) * monster_weight)
+                print("exit value: ", 1 / (1 + f.distance_to_exit(x, y, wrld)) * exit_weight)
+                print("monster value: ", -1 / (1 + (f.distance_to_monster(x, y, wrld))) * monster_weight)
                 print("bomb value: ", -1 / (1 + f.distance_to_bomb(x, y, wrld) * bomb_weight))
                 print("next to exit value: ", f.next_to_exit(x, y, wrld) * adjacent_exit_weight)
                 print("next to monster value: ", -f.next_to_monster(x, y, wrld) * adjacent_monst_weight)
