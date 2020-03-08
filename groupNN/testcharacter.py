@@ -54,6 +54,18 @@ class TestCharacter(CharacterEntity):
         # INITIALIZATION PHASE
         # ===============================
         # Initializes all variables and sets up world for testing
+        
+        # Read weights.txt
+        weight_file = open("../weights.txt", "r")
+        
+        global exit_weight, monster_weight, bomb_weight, wall_weight, adjacent_exit_weight, adjacent_monst_weight, explosion_weight
+        exit_weight = float(weight_file.readline())
+        monster_weight = float(weight_file.readline())
+        bomb_weight = float(weight_file.readline())
+        wall_weight = float(weight_file.readline())
+        adjacent_exit_weight = float(weight_file.readline())
+        adjacent_monst_weight = float(weight_file.readline())
+        explosion_weight = float(weight_file.readline())
 
         print("\nUsing weights:")
         print("  exit: ", exit_weight, " monster: ", monster_weight, " bomb: ", bomb_weight,
@@ -261,3 +273,14 @@ class TestCharacter(CharacterEntity):
 
         # The weight applied to the explosion feature
         explosion_weight = explosion_weight + learning_rate * delta * p_explosion
+        
+        # Store weights in txt file
+        weight_file = open("../weights.txt", "r+")
+        weight_file.seek(0)
+        weight_file.write(str(exit_weight) + "\n")
+        weight_file.write(str(monster_weight) + "\n")
+        weight_file.write(str(bomb_weight) + "\n")
+        weight_file.write(str(wall_weight) + "\n")
+        weight_file.write(str(adjacent_exit_weight) + "\n")
+        weight_file.write(str(adjacent_monst_weight) + "\n")
+        weight_file.write(str(explosion_weight) + "\n")
