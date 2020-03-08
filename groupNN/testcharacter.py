@@ -26,15 +26,15 @@ class TestCharacter(CharacterEntity):
         learning_rate = 0.2
 
         # The weight applied to the exit feature
-        exit_weight = 10
+        exit_weight = 15
         adjacent_exit_weight = 100
 
         # The weight applied to the monster feature
-        monster_weight = 2
+        monster_weight = 4.9
         adjacent_monst_weight = 100
         
         # The weight applied to the bomb feature
-        bomb_weight = 6
+        bomb_weight = 3
         explosion_weight = 3
         
         # The weight applied to the wall feature
@@ -104,8 +104,21 @@ class TestCharacter(CharacterEntity):
                     continue
                 if f.distance_to_monster(copied_char, copied_world) == 0:
                     continue
+                bomb_weight = 2
 
+                if f.distance_to_bomb(copied_char, copied_world) <= 4:
+                    coordinates = f.get_bomb_loc(copied_char, copied_world)
+                    if copied_char.x == coordinates[0] or copied_char.y == coordinates[1]:
+                        bomb_weight = bomb_weight**3
+                monster_weight = 4.9
+                # if f.distance_to_monster(copied_char, copied_world) >= 4:
+                #     monster_weight = 4.5
+                if f.distance_to_monster(copied_char, copied_world) >= 6:
+                    monster_weight = 3
+                if f.distance_to_monster(copied_char, copied_world) <=3:
+                    exit_weight = exit_weight / 2
                 print("new character coordinates: ", (copied_char.x, copied_char.y))
+                print("bomb weight: ", bomb_weight)
 
                 # evaluation of move value for each adjacent move (+2 to each due to -1 return for some - avoid 1/0)
                 exit_val = 1/(f.distance_to_exit(copied_char, copied_world)) * exit_weight
@@ -114,7 +127,6 @@ class TestCharacter(CharacterEntity):
                 adjacent_exit_val = f.next_to_exit(copied_char, copied_world) * adjacent_exit_weight
                 adjacent_monst_val = -f.next_to_monster(copied_char, copied_world) * adjacent_monst_weight
                 # wall_val = 1/(1+f.next_to_wall(copied_char, copied_world)) * wall_weight
-                print(f.is_in_explosion(copied_char, copied_world))
                 explosion_val = 1/(1+f.is_in_explosion(copied_char, copied_world)) * explosion_weight
 
                 print("=======================")
@@ -141,6 +153,19 @@ class TestCharacter(CharacterEntity):
         print("y: ", max_action[1])
 
         if f.next_to_wall(self, wrld):
+            if x-1 > 0:
+                if wrld.wall_at(self.x-1, self.y):
+                    self.place_bomb()
+            if x+1 < wrld.width():
+                if wrld.wall_at(self.x+1, self.y):
+                    self.place_bomb()
+            if y-1 > 0:
+                if wrld.wall_at(self.x, self.y-1):
+                    self.place_bomb()
+            if y+1 < wrld.height():
+                if wrld.wall_at(self.x, self.y+1):
+                    self.place_bomb()
+        elif f.distance_to_monster(self, wrld) <= 4 and self.y != 0:
             self.place_bomb()
         if f.next_to_exit(self, wrld):
             for x in range(self.x - 1, self.x + 2):

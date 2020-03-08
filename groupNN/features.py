@@ -130,3 +130,18 @@ class Features:
                 if coordinate[0] == cx and coordinate[1] == cy:
                     in_explosion = True
         return in_explosion
+
+    # function to return the coordinates of the bomb
+    def get_bomb_loc(self, CharacterEntity, World):
+        cx = World.me(CharacterEntity).x
+        cy = World.me(CharacterEntity).y
+        bomb = []
+        for x in range(cx - 4, cx + 5):
+            for y in range(cy - 4, cy + 5):
+                if 0 <= x < World.width() and 0 <= y < World.height():
+                    if World.bomb_at(x, y):
+                        bomb.append((x, y))
+        if len(bomb) != 0:
+            return bomb[0]
+        else:
+            return False
