@@ -62,8 +62,8 @@ class TestCharacter(CharacterEntity):
         max_action_value = 0
         max_action = [0, 0]
 
-        print("current char x: ", copied_char.x)
-        print("current char y: ", copied_char.y)
+        print("current coordinates: ", (copied_char.x, copied_char.y))
+
         # Loop through all 8 moves using the copied char and decide which one to make
         # Loop through all the dx values
         for dx in range(-1, 2):
@@ -88,7 +88,6 @@ class TestCharacter(CharacterEntity):
                 if copied_world.wall_at(x, y):
                     continue
                 if copied_world.exit_at(x, y):
-                    print("attempting to move into exit")
                     self.move(dx, dy)
                     break
 
