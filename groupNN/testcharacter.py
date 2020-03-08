@@ -14,37 +14,40 @@ from colorama import Fore, Back
 
 # import numpy
 
+#TODO maybe create weights for all features instead of reusing?
+# The rate at which to change the weights
+learning_rate = 0.01
+
+# The weight applied to the exit feature
+exit_weight = -2
+
+# The weight applied to the monster feature
+monster_weight = 3
+
+# The weight applied to the bomb feature
+bomb_weight = 2
+
+# The weight applied to the wall feature
+wall_weight = -1
+
+# Previous feature values (for updating weights)
+p_exit = 0
+p_monster = 0
+p_bomb = 0
+p_wall = 0
+
+# Next move
+nx = 0
+ny = 0
 
 class TestCharacter(CharacterEntity):
-
+        
     def do(self, wrld):
 
         # ===============================
         # INITIALIZATION PHASE
         # ===============================
         # Initializes all variables and sets up world for testing
-
-        weights_file = open("/Users/chrisbell/Dropbox/SeniorYear/CTerm/CS 4341/Projects/Bomberman3/groupNN/weights.txt", "r")
-
-        # The rate at which to change the weights
-        learning_rate = 0.2
-
-        # All weights retrieved from .txt file to hold data between games
-
-        # The weight applied to the exit feature
-        exit_weight = int(weights_file.readline())
-
-        # The weight applied to the monster feature
-        monster_weight = int(weights_file.readline())
-        
-        # The weight applied to the bomb feature
-        bomb_weight = int(weights_file.readline())
-        
-        # The weight applied to the wall feature
-        wall_weight = int(weights_file.readline())
-
-        # TODO Close after adjusting weights
-        weights_file.close()
 
         print("\nUsing weights:")
         print("  exit: ", exit_weight, " monster: ", monster_weight, " bomb: ", bomb_weight,
@@ -53,7 +56,7 @@ class TestCharacter(CharacterEntity):
         # TODO store in descent.txt
         # Gradient Descent percentage variable to decrease by set amount
 
-        desc_file = open("/Users/chrisbell/Dropbox/SeniorYear/CTerm/CS 4341/Projects/Bomberman3/groupNN/descent.txt", "r+")
+        desc_file = open("../descent.txt", "r+")
 
         grad_desc_perc = 10000
 
@@ -81,10 +84,11 @@ class TestCharacter(CharacterEntity):
         rand_choice = random.randrange(0, 10000, 1)
 
         if rand_choice <= int_curr:
-            self.non_rand_action(wrld, exit_weight, bomb_weight, monster_weight, wall_weight)
+            self.non_rand_action(self.x, self.y, wrld, True)
 
         else:
-            self.random_action(wrld)
+            self.non_rand_action(self.x, self.y, wrld, True)
+            #self.random_action(wrld)
 
         pass
 
@@ -95,12 +99,35 @@ class TestCharacter(CharacterEntity):
         print("Random dy: ", dy)
         print("Making random move (", dx, ",", dy, ")")
         self.move(dx, dy)
+        
+        # Update next move
+        global nx, ny
+        nx = dx
+        ny = dy
+        
+        # update previous feature values
+        global p_exit, p_monster, p_bomb, p_wall
+        p_exit = f.distance_to_exit(self.x, self.y, wrld)
+        p_monster = f.distance_to_monster(self.x, self.y, wrld)
+        p_bomb = f.distance_to_bomb(self.x, self.y, wrld)
+        p_wall = f.next_to_wall(self.x, self.y, wrld)
+        
+        max_val_rand = self.non_rand_action(self.x, self.y, wrld, False)
+        
+        self.up_weights(wrld, max_val_rand)
 
-    def non_rand_action(self, wrld, exit_weight, bomb_weight, monster_weight, wall_weight):
+    def non_rand_action(self, x, y, wrld, make_move):
         # Variable to hold the greatest value found when moving
         # max_action_value = float("-inf")
         max_action_value = float("-inf")
         max_action = (1, 0)
+
+        # update previous feature values
+        global p_exit, p_monster, p_bomb, p_wall
+        p_exit = f.distance_to_exit(self.x, self.y, wrld)
+        p_monster = f.distance_to_monster(self.x, self.y, wrld)
+        p_bomb = f.distance_to_bomb(self.x, self.y, wrld)
+        p_wall = f.next_to_wall(self.x, self.y, wrld)
 
         # Loop through all 8 moves using the copied char and decide which one to make
         # Loop through all the dx values
@@ -109,15 +136,57 @@ class TestCharacter(CharacterEntity):
             for dy in range (-1, 2):
                 print("=================================")
                 print("SPACE (", dx, dy, ")")
-                move_val = f.distance_to_exit(dx, dy, wrld) * exit_weight + f.distance_to_monster(dx, dy, wrld) * monster_weight + \
-                f.distance_to_bomb(dx, dy, wrld) * bomb_weight + f.next_to_exit(dx, dy, wrld) * exit_weight + \
-                f.next_to_monster(dx, dy, wrld) * monster_weight + f.next_to_wall(dx, dy, wrld) * wall_weight + \
-                f.is_in_explosion(dx, dy, wrld) * bomb_weight
+                
+                move_val = f.distance_to_exit(x+dx, y+dy, wrld) * exit_weight + f.distance_to_monster(x+dx, y+dy, wrld) * monster_weight + \
+                f.distance_to_bomb(x+dx, y+dy, wrld) * bomb_weight + f.next_to_exit(x+dx, y+dy, wrld) * exit_weight + \
+                f.next_to_monster(x+dx, y+dy, wrld) * monster_weight + f.next_to_wall(x+dx, y+dy, wrld) * wall_weight + \
+                f.is_in_explosion(x+dx, y+dy, wrld) * bomb_weight
                 if move_val > max_action_value:
                     max_action_value = move_val
                     max_action = (dx, dy)
                 print("val: ", move_val)
                 print("=================================")
 
-        print("Making move (", max_action[0], ",", max_action[1], ") with value ", max_action_value)
-        self.move(max_action[0], max_action[1])
+        if make_move == True:
+            print("Making move (", max_action[0], ",", max_action[1], ") with value ", max_action_value)
+            self.move(max_action[0], max_action[1])
+            # Update next move
+            global nx, ny
+            nx = max_action[0]
+            ny = max_action[1]
+            self.up_weights(wrld, max_action_value)
+        
+        else:
+            return max_action_value
+        
+    # Update weights
+    def up_weights(self, wrld, curr_value):
+        
+        reward = 0
+        if f.distance_to_monster(self.x, self.y, wrld) == 0 or f.is_in_explosion(self.x, self.y, wrld) == 1:
+            reward = -5000
+        elif f.distance_to_exit(self.x, self.y, wrld) == 0:
+            reward = 3000
+            
+        max_val_prime = self.non_rand_action(self.x + nx, self.y + ny, wrld, False)
+        print("Next Move: ", nx, " ", ny)
+        
+        delta = reward + max_val_prime - curr_value
+        print("PRIME: ", max_val_prime, ", CURRENT: ", curr_value)
+        print("DELTA: ", delta)
+        
+        global exit_weight, monster_weight, bomb_weight, wall_weight
+        
+        # The weight applied to the exit feature
+        exit_weight = exit_weight + learning_rate * delta * p_exit
+
+        # The weight applied to the monster feature
+        monster_weight = monster_weight + learning_rate * delta * p_monster
+        
+        # The weight applied to the bomb feature
+        bomb_weight = bomb_weight + learning_rate * delta * p_bomb
+        
+        # The weight applied to the wall feature
+        wall_weight = wall_weight + learning_rate * delta * p_wall
+
+        
