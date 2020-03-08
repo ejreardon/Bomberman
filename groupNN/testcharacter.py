@@ -130,7 +130,7 @@ class TestCharacter(CharacterEntity):
         # p_wall = f.next_to_wall(self.x, self.y, wrld)
         p_adjacent_exit = f.next_to_exit(self.x, self.y, wrld)
         p_adjacent_monster = -f.next_to_monster(self.x, self.y, wrld)
-        p_explosion = 1 / (1 + f.is_in_explosion(self.x, self.y, wrld))
+        p_explosion = -f.is_in_explosion(self.x, self.y, wrld)
         
         max_val_rand = self.non_rand_action(self.x, self.y, wrld, False)
         
@@ -150,7 +150,7 @@ class TestCharacter(CharacterEntity):
         # p_wall = f.next_to_wall(self.x, self.y, wrld)
         p_adjacent_exit = f.next_to_exit(self.x, self.y, wrld)
         p_adjacent_monster = -f.next_to_monster(self.x, self.y, wrld)
-        p_explosion = 1 / (1 + f.is_in_explosion(self.x, self.y, wrld))
+        p_explosion = -f.is_in_explosion(self.x, self.y, wrld)
 
         print("current coordinates: ", (self.x, self.y))
 
@@ -192,7 +192,7 @@ class TestCharacter(CharacterEntity):
                 adjacent_monst_val = -f.next_to_monster(x, y, wrld) * adjacent_monst_weight
                 # wall_val = 1/(1+f.next_to_wall(copied_char, copied_world)) * wall_weight
                 print(f.is_in_explosion(x, y, wrld))
-                explosion_val = 1 / (1 + f.is_in_explosion(x, y, wrld)) * explosion_weight
+                explosion_val = -f.is_in_explosion(x, y, wrld) * explosion_weight
 
                 print("=======================")
                 print("exit value: ", 1 / (1 + f.distance_to_exit(x, y, wrld)) * exit_weight)
@@ -201,7 +201,7 @@ class TestCharacter(CharacterEntity):
                 print("next to exit value: ", f.next_to_exit(x, y, wrld) * adjacent_exit_weight)
                 print("next to monster value: ", -f.next_to_monster(x, y, wrld) * adjacent_monst_weight)
                 print("next to wall value: ", 1 / (1 + f.next_to_wall(x, y, wrld)) * wall_weight)
-                print("in explosion value: ", 1 / (1 + f.is_in_explosion(x, y, wrld)) * explosion_weight)
+                print("in explosion value: ", -f.is_in_explosion(x, y, wrld) * explosion_weight)
                 print("=======================")
 
                 move_val = exit_val + monst_val + bomb_val + adjacent_exit_val + adjacent_monst_val + explosion_val  # + wall_val
