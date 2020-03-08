@@ -112,8 +112,8 @@ class TestCharacter(CharacterEntity):
         
         # update previous feature values
         global p_exit, p_monster, p_bomb, p_wall, p_adjacent_exit, p_adjacent_monster, p_explosion
-        p_exit = 1 / (f.distance_to_exit(self.x, self.y, wrld))
-        p_monster = -1 / (f.distance_to_monster(self.x, self.y, wrld))
+        p_exit = 1 / (1 + f.distance_to_exit(self.x, self.y, wrld))
+        p_monster = -1 / (1 + f.distance_to_monster(self.x, self.y, wrld))
         p_bomb = -1 / (1 + f.distance_to_bomb(self.x, self.y, wrld))
         # p_wall = f.next_to_wall(self.x, self.y, wrld)
         p_adjacent_exit = f.next_to_exit(self.x, self.y, wrld)
@@ -132,8 +132,8 @@ class TestCharacter(CharacterEntity):
 
         # update previous feature values
         global p_exit, p_monster, p_bomb, p_wall, p_adjacent_exit, p_adjacent_monster, p_explosion
-        p_exit = 1 / (f.distance_to_exit(self.x, self.y, wrld))
-        p_monster = -1 / (f.distance_to_monster(self.x, self.y, wrld))
+        p_exit = 1 / (1 + f.distance_to_exit(self.x, self.y, wrld))
+        p_monster = -1 / (1 + f.distance_to_monster(self.x, self.y, wrld))
         p_bomb = -1 / (1 + f.distance_to_bomb(self.x, self.y, wrld))
         # p_wall = f.next_to_wall(self.x, self.y, wrld)
         p_adjacent_exit = f.next_to_exit(self.x, self.y, wrld)
