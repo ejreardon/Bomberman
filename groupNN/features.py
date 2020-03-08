@@ -62,7 +62,7 @@ class Features:
         if mx != 1000 and my != 1000:
             return max_dist
         else:
-            return 10000
+            return 1000000000
 
     # function to tell distance of an agent to a bomb
     def distance_to_bomb(self, x, y, World):
@@ -80,7 +80,7 @@ class Features:
             dist_y = abs(by - cy)
             return max(dist_x, dist_y)
         else:
-            return 10000
+            return 1000000000
 
     # function to tell whether an agent is next to an exit
     def next_to_exit(self, x, y, World):
@@ -115,17 +115,27 @@ class Features:
             return False
 
     # function to tell whether an agent is in a bomb explosion
+    # expl range is 4
     def is_in_explosion(self, x, y, World):
         cx = x
         cy = y
-        explosions = []
-        for x in range(0, World.width()):
-            for y in range(0, World.height()):
-                if World.explosion_at(x, y):
-                    explosions.append((x, y))
-        in_explosion = False
-        if len(explosions) != 0:
-            for coordinate in explosions:
-                if coordinate[0] == cx and coordinate[1] == cy:
-                    in_explosion = True
-        return in_explosion
+        
+        for x in range(cx - 4, cx + 4):
+            if World.bomb_at(x, cy):
+                return True
+        for y in range(cy - 4, cy + 4):
+            if World.bomb_at(y, cy):
+                return True
+        return False
+            
+#        explosions = []
+#        for x in range(0, World.width()):
+#            for y in range(0, World.height()):
+#                if World.explosion_at(x, y):
+#                    explosions.append((x, y))
+#        in_explosion = False
+#        if len(explosions) != 0:
+#            for coordinate in explosions:
+#                if coordinate[0] == cx and coordinate[1] == cy:
+#                    in_explosion = True
+#        return in_explosion

@@ -240,10 +240,10 @@ class TestCharacter(CharacterEntity):
     def up_weights(self, wrld, curr_value):
         
         reward = 0
-        if f.distance_to_monster(self.x, self.y, wrld) == 0 or f.is_in_explosion(self.x, self.y, wrld) == 1:
-            reward = -5000
-        elif f.distance_to_exit(self.x, self.y, wrld) == 0:
-            reward = 3000
+        if f.distance_to_monster(self.x, self.y, wrld) == 1 or f.is_in_explosion(self.x, self.y, wrld) == 1:
+            reward = -300
+        elif f.distance_to_exit(self.x, self.y, wrld) == 1:
+            reward = 500
             
         max_val_prime = self.non_rand_action(self.x + nx, self.y + ny, wrld, False)
         
