@@ -62,6 +62,7 @@ class TestCharacter(CharacterEntity):
         max_action_value = float("-inf")
         max_action = [0, 0]
 
+        # print the current bomberman coordinates
         print("current coordinates: ", (copied_char.x, copied_char.y))
 
         # Loop through all 8 moves using the copied char and decide which one to make
@@ -73,8 +74,10 @@ class TestCharacter(CharacterEntity):
                 copied_world = SensedWorld.from_world(wrld)
                 copied_char = copied_world.me(self)
 
+                # get the new coordinates of the intended move
                 x = copied_char.x + dx
                 y = copied_char.y + dy
+                # booleans to check whether the move is possible
                 out_bounds_x = x < 0 or x >= copied_world.width()
                 out_bounds_y = y < 0 or y >= copied_world.height()
 
@@ -83,10 +86,12 @@ class TestCharacter(CharacterEntity):
                     continue
                 if out_bounds_y:
                     continue
-                if copied_char.x == x and copied_char.y == y:
-                    continue
                 if copied_world.wall_at(x, y):
                     continue
+                # don't stay in the same place if there is another possible move
+                if copied_char.x == x and copied_char.y == y:
+                    continue
+                # move to the exit if it is there!
                 if copied_world.exit_at(x, y):
                     self.move(dx, dy)
                     break
@@ -94,8 +99,7 @@ class TestCharacter(CharacterEntity):
                 print("================================================")
                 print("TODO: CHECK (", dx, dy, ")")
                 copied_char.move(dx, dy)
-                # potentially update copied world and character?
-                # fixes same values for each move but distorts sense of self coordinates
+                # update copied world and character after the move
                 copied_world, events = copied_world.next()
                 copied_char = copied_world.me(self)
 
@@ -104,23 +108,30 @@ class TestCharacter(CharacterEntity):
                     continue
                 if f.distance_to_monster(copied_char, copied_world) == 0:
                     continue
-                bomb_weight = 2
 
+                # reset the bomb weight in case it was previously changed
+                bomb_weight = 2
+                # if the distance from the bomberman to its bomb is within 4 spaces
                 if f.distance_to_bomb(copied_char, copied_world) <= 4:
+                    # get the coordinates of the bomb
                     coordinates = f.get_bomb_loc(copied_char, copied_world)
+                    # if the bomberman is in line to get hit with an explosion
                     if copied_char.x == coordinates[0] or copied_char.y == coordinates[1]:
+                        # greatly increase the bomb weight to signify bad move
                         bomb_weight = bomb_weight**3
+
+                # reset the monster weight in case it was previously changed
                 monster_weight = 4.9
-                # if f.distance_to_monster(copied_char, copied_world) >= 4:
-                #     monster_weight = 4.5
+                # if the monster is 6 or greater spaces away, decrease monster weight
                 if f.distance_to_monster(copied_char, copied_world) >= 6:
                     monster_weight = 3
+                # if the monster is 3 spaces away or less, halve the exit weight
                 if f.distance_to_monster(copied_char, copied_world) <= 3:
                     exit_weight = exit_weight / 2
                 print("new character coordinates: ", (copied_char.x, copied_char.y))
                 print("bomb weight: ", bomb_weight)
 
-                # evaluation of move value for each adjacent move (+2 to each due to -1 return for some - avoid 1/0)
+                # evaluation of move value for each adjacent move
                 exit_val = 1/(f.distance_to_exit(copied_char, copied_world)) * exit_weight
                 monst_val = -1/(f.distance_to_monster(copied_char, copied_world)) * monster_weight
                 bomb_val = -1/(1+f.distance_to_bomb(copied_char, copied_world)) * bomb_weight
@@ -135,7 +146,7 @@ class TestCharacter(CharacterEntity):
                 print("bomb value: ", -1/(1+f.distance_to_bomb(copied_char, copied_world) * bomb_weight))
                 print("next to exit value: ", f.next_to_exit(copied_char, copied_world) * adjacent_exit_weight)
                 print("next to monster value: ", -f.next_to_monster(copied_char, copied_world) * adjacent_monst_weight)
-                print("next to wall value: ", 1/(1+f.next_to_wall(copied_char, copied_world)) * wall_weight)
+                # print("next to wall value: ", 1/(1+f.next_to_wall(copied_char, copied_world)) * wall_weight)
                 print("in explosion value: ", 1/(1+f.is_in_explosion(copied_char, copied_world)) * explosion_weight)
                 print("=======================")
 
@@ -148,25 +159,33 @@ class TestCharacter(CharacterEntity):
                     max_action[0] = dx
                     max_action[1] = dy
 
+        # print showing max value and best move
         print("best value: ", max_action_value)
         print("x: ", max_action[0])
         print("y: ", max_action[1])
 
+        # if the bomberman is currently next to wall
         if f.next_to_wall(self, wrld):
+            # since bombs diagonal to a wall do not hit them,
+            # place a bomb if it is directly to the left or right of the wall
             if x-1 > 0:
                 if wrld.wall_at(self.x-1, self.y):
                     self.place_bomb()
             if x+1 < wrld.width():
                 if wrld.wall_at(self.x+1, self.y):
                     self.place_bomb()
+            # place a bomb if it is directly to the upwards or downwards of the wall
             if y-1 > 0:
                 if wrld.wall_at(self.x, self.y-1):
                     self.place_bomb()
             if y+1 < wrld.height():
                 if wrld.wall_at(self.x, self.y+1):
                     self.place_bomb()
+        # else, if the monster is getting close to the bomberman, place a bomb
         elif f.distance_to_monster(self, wrld) <= 4 and (self.y != 0 or self.x != 1):
             self.place_bomb()
+
+        # if the bomberman is next to the exit, move there!
         if f.next_to_exit(self, wrld):
             for x in range(self.x - 1, self.x + 2):
                 for y in range(self.y - 1, self.y + 2):
@@ -174,17 +193,8 @@ class TestCharacter(CharacterEntity):
                         if wrld.exit_at(x, y):
                             self.move(x, y)
                             continue
+        # if not, make the move determined from the exploitation of weights
         else:
             self.move(max_action[0], max_action[1])
-
-        # print("================================================")
-        # print("exit distance: ", f.distance_to_exit(copied_char, copied_world))
-        # print("monster distance: ", f.distance_to_monster(copied_char, copied_world))
-        # print("bomb distance: ", f.distance_to_bomb(copied_char, copied_world))
-        # print("next to exit: ", f.next_to_exit(copied_char, copied_world))
-        # print("next to monster: ", f.next_to_monster(copied_char, copied_world))
-        # print("next to wall: ", f.next_to_wall(copied_char, copied_world))
-        # print("in explosion: ", f.is_in_explosion(copied_char, copied_world))
-        # print("================================================")
 
         pass
