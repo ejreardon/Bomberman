@@ -26,7 +26,7 @@ class TestCharacter(CharacterEntity):
         learning_rate = 0.2
 
         # The weight applied to the exit feature
-        exit_weight = 15
+        exit_weight = 13
         adjacent_exit_weight = 100
 
         # The weight applied to the monster feature
@@ -115,7 +115,7 @@ class TestCharacter(CharacterEntity):
                 #     monster_weight = 4.5
                 if f.distance_to_monster(copied_char, copied_world) >= 6:
                     monster_weight = 3
-                if f.distance_to_monster(copied_char, copied_world) <=3:
+                if f.distance_to_monster(copied_char, copied_world) <= 3:
                     exit_weight = exit_weight / 2
                 print("new character coordinates: ", (copied_char.x, copied_char.y))
                 print("bomb weight: ", bomb_weight)
@@ -165,7 +165,7 @@ class TestCharacter(CharacterEntity):
             if y+1 < wrld.height():
                 if wrld.wall_at(self.x, self.y+1):
                     self.place_bomb()
-        elif f.distance_to_monster(self, wrld) <= 4 and self.y != 0:
+        elif f.distance_to_monster(self, wrld) <= 4 and (self.y != 0 or self.x != 1):
             self.place_bomb()
         if f.next_to_exit(self, wrld):
             for x in range(self.x - 1, self.x + 2):
