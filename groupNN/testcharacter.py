@@ -16,14 +16,14 @@ from colorama import Fore, Back
 
 #TODO maybe create weights for all features instead of reusing?
 # The rate at which to change the weights
-learning_rate = 0.05
+learning_rate = 0.2
 
 # The weight applied to the exit feature
-exit_weight = 3
+exit_weight = 6
 adjacent_exit_weight = 100
 
 # The weight applied to the monster feature
-monster_weight = 2
+monster_weight = 3
 adjacent_monst_weight = 100
 
 # The weight applied to the bomb feature
