@@ -30,11 +30,11 @@ class TestCharacter(CharacterEntity):
         adjacent_exit_weight = 100
 
         # The weight applied to the monster feature
-        monster_weight = 3
+        monster_weight = 2
         adjacent_monst_weight = 100
         
         # The weight applied to the bomb feature
-        bomb_weight = 1
+        bomb_weight = 6
         explosion_weight = 3
         
         # The weight applied to the wall feature
@@ -59,7 +59,7 @@ class TestCharacter(CharacterEntity):
         # use them to find the best solution and make the move
 
         # Variable to hold the greatest value found when moving
-        max_action_value = 0
+        max_action_value = float("-inf")
         max_action = [0, 0]
 
         print("current coordinates: ", (copied_char.x, copied_char.y))
@@ -101,6 +101,8 @@ class TestCharacter(CharacterEntity):
 
                 # if the move causes the char to die, do not move there!
                 if copied_char is None:
+                    continue
+                if f.distance_to_monster(copied_char, copied_world) == 0:
                     continue
 
                 print("new character coordinates: ", (copied_char.x, copied_char.y))
