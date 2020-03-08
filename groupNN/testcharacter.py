@@ -62,8 +62,7 @@ class TestCharacter(CharacterEntity):
         max_action_value = float("-inf")
         max_action = [0, 0]
 
-        # print the current bomberman coordinates
-        print("current coordinates: ", (copied_char.x, copied_char.y))
+#        print("current coordinates: ", (copied_char.x, copied_char.y))
 
         # Loop through all 8 moves using the copied char and decide which one to make
         # Loop through all the dx values
@@ -96,8 +95,8 @@ class TestCharacter(CharacterEntity):
                     self.move(dx, dy)
                     break
 
-                print("================================================")
-                print("TODO: CHECK (", dx, dy, ")")
+#                print("================================================")
+#                print("TODO: CHECK (", dx, dy, ")")
                 copied_char.move(dx, dy)
                 # update copied world and character after the move
                 copied_world, events = copied_world.next()
@@ -128,8 +127,8 @@ class TestCharacter(CharacterEntity):
                 # if the monster is 3 spaces away or less, halve the exit weight
                 if f.distance_to_monster(copied_char, copied_world) <= 3:
                     exit_weight = exit_weight / 2
-                print("new character coordinates: ", (copied_char.x, copied_char.y))
-                print("bomb weight: ", bomb_weight)
+#                print("new character coordinates: ", (copied_char.x, copied_char.y))
+#                print("bomb weight: ", bomb_weight)
 
                 # evaluation of move value for each adjacent move
                 exit_val = 1/(f.distance_to_exit(copied_char, copied_world)) * exit_weight
@@ -140,18 +139,18 @@ class TestCharacter(CharacterEntity):
                 # wall_val = 1/(1+f.next_to_wall(copied_char, copied_world)) * wall_weight
                 explosion_val = 1/(1+f.is_in_explosion(copied_char, copied_world)) * explosion_weight
 
-                print("=======================")
-                print("exit value: ", 1/f.distance_to_exit(copied_char, copied_world) * exit_weight)
-                print("monster value: ", -1/(f.distance_to_monster(copied_char, copied_world)) * monster_weight)
-                print("bomb value: ", -1/(1+f.distance_to_bomb(copied_char, copied_world) * bomb_weight))
-                print("next to exit value: ", f.next_to_exit(copied_char, copied_world) * adjacent_exit_weight)
-                print("next to monster value: ", -f.next_to_monster(copied_char, copied_world) * adjacent_monst_weight)
-                # print("next to wall value: ", 1/(1+f.next_to_wall(copied_char, copied_world)) * wall_weight)
-                print("in explosion value: ", 1/(1+f.is_in_explosion(copied_char, copied_world)) * explosion_weight)
-                print("=======================")
+#                print("=======================")
+#                print("exit value: ", 1/f.distance_to_exit(copied_char, copied_world) * exit_weight)
+#                print("monster value: ", -1/(f.distance_to_monster(copied_char, copied_world)) * monster_weight)
+#                print("bomb value: ", -1/(1+f.distance_to_bomb(copied_char, copied_world) * bomb_weight))
+#                print("next to exit value: ", f.next_to_exit(copied_char, copied_world) * adjacent_exit_weight)
+#                print("next to monster value: ", -f.next_to_monster(copied_char, copied_world) * adjacent_monst_weight)
+#                print("next to wall value: ", 1/(1+f.next_to_wall(copied_char, copied_world)) * wall_weight)
+#                print("in explosion value: ", 1/(1+f.is_in_explosion(copied_char, copied_world)) * explosion_weight)
+#                print("=======================")
 
                 move_val = exit_val + monst_val + bomb_val + adjacent_exit_val + adjacent_monst_val + explosion_val # + wall_val
-                print("total value: ", move_val)
+                #print("total value: ", move_val)
 
                 # store the greatest value move
                 if move_val >= max_action_value:
@@ -159,10 +158,9 @@ class TestCharacter(CharacterEntity):
                     max_action[0] = dx
                     max_action[1] = dy
 
-        # print showing max value and best move
-        print("best value: ", max_action_value)
-        print("x: ", max_action[0])
-        print("y: ", max_action[1])
+#        print("best value: ", max_action_value)
+#        print("x: ", max_action[0])
+#        print("y: ", max_action[1])
 
         # if the bomberman is currently next to wall
         if f.next_to_wall(self, wrld):
