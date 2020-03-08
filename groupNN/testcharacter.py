@@ -16,14 +16,14 @@ from colorama import Fore, Back
 
 #TODO maybe create weights for all features instead of reusing?
 # The rate at which to change the weights
-learning_rate = 0.01
+learning_rate = 0.05
 
 # The weight applied to the exit feature
-exit_weight = -2
+exit_weight = 3
 adjacent_exit_weight = 100
 
 # The weight applied to the monster feature
-monster_weight = 3
+monster_weight = 2
 adjacent_monst_weight = 100
 
 # The weight applied to the bomb feature
@@ -31,7 +31,7 @@ bomb_weight = 2
 explosion_weight = 10
 
 # The weight applied to the wall feature
-wall_weight = -1
+wall_weight = 0
 
 # Previous feature values (for updating weights)
 p_exit = 0
@@ -124,7 +124,7 @@ class TestCharacter(CharacterEntity):
         
         self.up_weights(wrld, max_val_rand)
 
-    def non_rand_action(self, x, y, wrld, make_move):
+    def non_rand_action(self, ix, iy, wrld, make_move):
         # Variable to hold the greatest value found when moving
         # max_action_value = float("-inf")
         max_action_value = float("-inf")
@@ -151,8 +151,8 @@ class TestCharacter(CharacterEntity):
                 # copied_world = SensedWorld.from_world(wrld)
                 # copied_char = copied_world.me(self)
 
-                x = self.x + dx
-                y = self.y + dy
+                x = ix + dx
+                y = iy + dy
                 out_bounds_x = x < 0 or x >= wrld.width()
                 out_bounds_y = y < 0 or y >= wrld.height()
 
@@ -204,6 +204,9 @@ class TestCharacter(CharacterEntity):
         print("best value: ", max_action_value)
         print("x: ", max_action[0])
         print("y: ", max_action[1])
+        global nx, ny
+        nx = max_action[0]
+        ny = max_action[1]
 
         if make_move == True:
             if f.next_to_wall(self.x, self.y, wrld):
@@ -217,9 +220,6 @@ class TestCharacter(CharacterEntity):
                                 continue
             else:
                 self.move(max_action[0], max_action[1])
-            global nx, ny
-            nx = max_action[0]
-            ny = max_action[1]
             self.up_weights(wrld, max_action_value)
         else:
             return max_action_value
@@ -234,7 +234,6 @@ class TestCharacter(CharacterEntity):
             reward = 3000
             
         max_val_prime = self.non_rand_action(self.x + nx, self.y + ny, wrld, False)
-        print("Next Move: ", nx, " ", ny)
         
         delta = reward + max_val_prime - curr_value
         print("PRIME: ", max_val_prime, ", CURRENT: ", curr_value)
