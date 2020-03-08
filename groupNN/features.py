@@ -5,7 +5,6 @@ import sys
 sys.path.insert(0, '../bomberman')
 from sensed_world import SensedWorld
 
-
 # Import necessary stuff
 from entity import CharacterEntity
 from colorama import Fore, Back
@@ -14,7 +13,7 @@ class Features:
     # def __init__(self, CharacterEntity, World):
     #     self.CharacterEntity = CharacterEntity
     #     self.World = World
-    
+
     # function to tell the distance of the agent to the exit
     def distance_to_exit(self, x, y, World):
         ex, ey = -1, -1
@@ -31,20 +30,20 @@ class Features:
             return max(dist_x, dist_y)
         else:
             return -1
-    
+
     # function to tell the distance of the agent to the CLOSEST monster
     def distance_to_monster(self, x, y, World):
         mx, my = 1000, 1000
         cx = x
         cy = y
         monsters = []
-    
+
         # get the list of monster coordinates
         for x in range(0, World.width()):
             for y in range(0, World.height()):
                 if World.monsters_at(x, y):
                     monsters.append((x, y))
-    
+
         # find the maximum coordinate distance
         dist_x, dist_y, max_dist = 1000, 1000, 1000
         for i in range(len(monsters)):
@@ -64,7 +63,7 @@ class Features:
             return max_dist
         else:
             return -1
-    
+
     # function to tell distance of an agent to a bomb
     def distance_to_bomb(self, x, y, World):
         bx = -1
@@ -82,7 +81,7 @@ class Features:
             return max(dist_x, dist_y)
         else:
             return -1
-    
+
     # function to tell whether an agent is next to an exit
     def next_to_exit(self, x, y, World):
         dist = self.distance_to_exit(x, y, World)
@@ -90,7 +89,7 @@ class Features:
             return True
         else:
             return False
-    
+
     # function to tell whether an agent is next to a monster
     def next_to_monster(self, x, y, World):
         dist = self.distance_to_monster(x, y, World)
@@ -98,23 +97,23 @@ class Features:
             return True
         else:
             return False
-    
+
     # function to tell whether an agent is next to a wall
     # ToDo: Can Expand on this to return direction or placement of walls
     def next_to_wall(self, x, y, World):
         cx = x
         cy = y
         walls = []
-        for x in range(cx-1, cx+1):
-            for y in range(cy-1, cy+1):
+        for x in range(cx - 1, cx + 2):
+            for y in range(cy - 1, cy + 2):
                 if 0 <= x < World.width() and 0 <= y < World.height():
-                    if World.wall_at(x,y):
+                    if World.wall_at(x, y):
                         walls.append((x, y))
         if len(walls) != 0:
             return True
         else:
             return False
-    
+
     # function to tell whether an agent is in a bomb explosion
     def is_in_explosion(self, x, y, World):
         cx = x
@@ -124,8 +123,9 @@ class Features:
             for y in range(0, World.height()):
                 if World.explosion_at(x, y):
                     explosions.append((x, y))
+        in_explosion = False
         if len(explosions) != 0:
-            if (cx, cy) in explosions:
-                return True
-        else:
-            return False
+            for coordinate in explosions:
+                if coordinate[0] == cx and coordinate[1] == cy:
+                    in_explosion = True
+        return in_explosion
