@@ -62,7 +62,7 @@ class Features:
         if mx != 1000 and my != 1000:
             return max_dist
         else:
-            return -1
+            return 10000
 
     # function to tell distance of an agent to a bomb
     def distance_to_bomb(self, x, y, World):
@@ -80,7 +80,7 @@ class Features:
             dist_y = by - cy
             return max(dist_x, dist_y)
         else:
-            return -1
+            return 10000
 
     # function to tell whether an agent is next to an exit
     def next_to_exit(self, x, y, World):

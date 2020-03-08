@@ -183,15 +183,15 @@ class TestCharacter(CharacterEntity):
                 print(f.is_in_explosion(x, y, wrld))
                 explosion_val = 1 / (1 + f.is_in_explosion(x, y, wrld)) * explosion_weight
 
-                # print("=======================")
-                # print("exit value: ", 1 / f.distance_to_exit(x, y, wrld) * exit_weight)
-                # print("monster value: ", -1 / (f.distance_to_monster(x, y, wrld)) * monster_weight)
-                # print("bomb value: ", -1 / (1 + f.distance_to_bomb(x, y, wrld) * bomb_weight))
-                # print("next to exit value: ", f.next_to_exit(x, y, wrld) * adjacent_exit_weight)
-                # print("next to monster value: ", -f.next_to_monster(x, y, wrld) * adjacent_monst_weight)
-                # print("next to wall value: ", 1 / (1 + f.next_to_wall(x, y, wrld)) * wall_weight)
-                # print("in explosion value: ", 1 / (1 + f.is_in_explosion(x, y, wrld)) * explosion_weight)
-                # print("=======================")
+                print("=======================")
+                print("exit value: ", 1 / f.distance_to_exit(x, y, wrld) * exit_weight)
+                print("monster value: ", -1 / (f.distance_to_monster(x, y, wrld)) * monster_weight)
+                print("bomb value: ", -1 / (1 + f.distance_to_bomb(x, y, wrld) * bomb_weight))
+                print("next to exit value: ", f.next_to_exit(x, y, wrld) * adjacent_exit_weight)
+                print("next to monster value: ", -f.next_to_monster(x, y, wrld) * adjacent_monst_weight)
+                print("next to wall value: ", 1 / (1 + f.next_to_wall(x, y, wrld)) * wall_weight)
+                print("in explosion value: ", 1 / (1 + f.is_in_explosion(x, y, wrld)) * explosion_weight)
+                print("=======================")
 
                 move_val = exit_val + monst_val + bomb_val + adjacent_exit_val + adjacent_monst_val + explosion_val  # + wall_val
                 print("total value: ", move_val)
@@ -207,9 +207,9 @@ class TestCharacter(CharacterEntity):
         print("y: ", max_action[1])
 
         if make_move == True:
-            if f.next_to_wall(self, wrld):
+            if f.next_to_wall(self.x, self.y, wrld):
                 self.place_bomb()
-            if f.next_to_exit(self, wrld):
+            if f.next_to_exit(self.x, self.y, wrld):
                 for x in range(self.x - 1, self.x + 2):
                     for y in range(self.y - 1, self.y + 2):
                         if 0 <= x < wrld.width() and 0 <= y < wrld.height():
